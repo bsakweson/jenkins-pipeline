@@ -93,12 +93,15 @@ def containerBuildPub(Map args) {
 
     println "Running Docker build/publish: ${args.host}/${args.acct}/${args.repo}:${args.tags}"
 
-    docker.withRegistry("https://${args.host}", "${args.auth_id}") {
-
+    docker.withRegistry("${args.host}", "${args.auth_id}") {
+        println "Actually building some shit **********************************"
         // def img = docker.build("${args.acct}/${args.repo}", args.dockerfile)
         def img = docker.image("${args.acct}/${args.repo}")
+        println "What is this value of host: ${args.host} :::*************"
         sh "docker build --build-arg VCS_REF=${env.GIT_SHA} --build-arg BUILD_DATE=`date -u +'%Y-%m-%dT%H:%M:%SZ'` -t ${args.acct}/${args.repo} ${args.dockerfile}"
+        println "Build call is done by the time I see this **********************************"
         for (int i = 0; i < args.tags.size(); i++) {
+            println "Now in the for loop and would like to know value of this: ${args.tags.get(i)}"
             img.push(args.tags.get(i))
         }
 
